@@ -27,8 +27,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.example.android.guesstheword.R
 import com.example.android.guesstheword.databinding.GameFragmentBinding
+import androidx.navigation.fragment.NavHostFragment.findNavController
 
 /**
  * Fragment where the game is played
@@ -53,11 +55,17 @@ class GameFragment : Fragment() {
         )
 
         Log.i("GameFragment", "Called ViewModelProviders.of")
+
+        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
+            binding.wordText.text = newWord
+        })
         viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
             binding.scoreText.text = newScore.toString()
         })
-        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
-            binding.wordText.text = newWord
+
+        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
+            binding.scoreText.text = newScore.toString()
+
         })
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer<Boolean> { hasFinished ->
             if (hasFinished) gameFinished()
@@ -105,12 +113,12 @@ class GameFragment : Fragment() {
 
     private fun gameFinished() {
         Toast.makeText(activity, "Game has just finished", Toast.LENGTH_SHORT).show()
+        val action = GameFragmentDirections.actionGameToScore()
+        action.score = viewModel.score.value?:0
+        findNavController(this).navigate(action)
+        viewModel.onGameFinishComplete()
         //        val action = GameFragmentDirections.actionGameToScore()
         //        action.score = viewModel.score.value?:0
         //        NavHostFragment.findNavController(this).navigate(action)
-        
-        val action = GameFragmentDirections.actionGameToScore()
-        action.score = viewModel.score.value?:0
-        NavHostFragment.findNavController(this).navigate(action)
     }
 }
