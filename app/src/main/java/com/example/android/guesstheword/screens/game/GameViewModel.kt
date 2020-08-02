@@ -4,18 +4,20 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class GameViewModel : ViewModel() {
-    // The current word
-    var word = ""
-    // The current score
-    var score = 0
-    // The list of words - the front of the list is the next word to guess
-    private lateinit var wordList: MutableList<String>
 
+class GameViewModel : ViewModel() {
+    init {
+        Log.i("GameViewModel", "GameViewModel created!")
+    }
+    // The current word
     // The current word
     val word = MutableLiveData<String>()
     // The current score
     val score = MutableLiveData<Int>()
+    // The list of words - the front of the list is the next word to guess
+    private lateinit var wordList: MutableList<String>
+
+
 
     /**
      * Resets the list of words and randomizes the order
@@ -60,20 +62,23 @@ class GameViewModel : ViewModel() {
     private fun nextWord() {
         if (!wordList.isEmpty()) {
             //Select and remove a word from the list
-            word = wordList.removeAt(0)
+            word.value = wordList.removeAt(0)
         }
 
     }
     /** Methods for buttons presses **/
     fun onSkip() {
-        score--
+        score.value = (score.value)?.minus(1)
         nextWord()
     }
 
     fun onCorrect() {
-        score++
+        score.value = (score.value)?.plus(1)
         nextWord()
+
     }
+
+
 
     override fun onCleared() {
         super.onCleared()
