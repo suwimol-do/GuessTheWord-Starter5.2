@@ -7,13 +7,9 @@ import androidx.lifecycle.ViewModel
 
 
 class GameViewModel : ViewModel() {
-    init {
-        Log.i("GameViewModel", "GameViewModel created!")
-    }
-    // The current word
-    // The current word
-    private val _word = MutableLiveData<String>()
 
+    // The current _word
+    private val _word = MutableLiveData<String>()
 
     // The current score
     private val _score = MutableLiveData<Int>()
@@ -30,9 +26,8 @@ class GameViewModel : ViewModel() {
         get() = _eventGameFinish
 
 
-    // The list of words - the front of the list is the next word to guess
+    // The list of words - the front of the list is the next _word to guess
     private lateinit var wordList: MutableList<String>
-
 
 
     /**
@@ -68,46 +63,52 @@ class GameViewModel : ViewModel() {
     init {
         _word.value = ""
         _score.value = 0
+        Log.i("GameViewModel", "GameViewModel created!")
         resetList()
         nextWord()
-        Log.i("GameViewModel", "GameViewModel created!")
     }
+
     /**
-     * Moves to the next word in the list
+     * Callback called when the ViewModel is destroyed
      */
-    private fun nextWord() {
-        if (wordList.isEmpty()) {
-            onGameFinish()
-        } else {
-            //Select and remove a _word from the list
-            _word.value = wordList.removeAt(0)
-        }
-
-    }
-    /** Methods for buttons presses **/
-    fun onSkip() {
-        _score.value = (score.value)?.minus(1)
-        nextWord()
-    }
-
-    fun onCorrect() {
-        _score.value = (score.value)?.plus(1)
-        nextWord()
-
-    }
-
-
-
     override fun onCleared() {
         super.onCleared()
         Log.i("GameViewModel", "GameViewModel destroyed!")
     }
 
+    /** Methods for updating the UI **/
+    fun onSkip() {
+        _score.value = (_score.value)?.minus(1)
+        nextWord()
+    }
+    fun onCorrect() {
+        _score.value = (_score.value)?.plus(1)
+        nextWord()
+    }
+
+    /**
+     * Moves to the next _word in the list.
+     */
+    private fun nextWord() {
+        if (wordList.isEmpty()) {
+            onGameFinish()
+
+        } else {
+            //Select and remove a _word from the list
+            _word.value = wordList.removeAt(0)
+        }
+    }
+
+
+
+    /** Method for the game completed event **/
 
     fun onGameFinish() {
         _eventGameFinish.value = true
     }
+
     fun onGameFinishComplete() {
         _eventGameFinish.value = false
     }
+
 }
